@@ -1,4 +1,5 @@
 #include "parser.h"
+
 bool Parser::tokenCodeIn(TokenCode tc, const TokenCode list[])
 {
 }
@@ -103,11 +104,11 @@ void Parser::parseStatementPrime(SymbolTableEntry* prevEntry)
 {
 }
 
-SymbolTableEntry* parseVariable()
+SymbolTableEntry* Parser::parseVariable()
 {
 }
 
-SymbolTableEntry* parseVariablePrime(SymbolTableEntry* prevEntry)
+SymbolTableEntry* Parser::parseVariablePrime(SymbolTableEntry* prevEntry)
 {
 }
 
@@ -127,35 +128,35 @@ void Parser::parseExpressionListPrime(EntryList& expList)
 {
 }
 
-SymbolTableEntry* parseExpression()
+SymbolTableEntry* Parser::parseExpression()
 {
 }
 
-SymbolTableEntry* parseExpressionPrime(SymbolTableEntry* prevEntry)
+SymbolTableEntry* Parser::parseExpressionPrime(SymbolTableEntry* prevEntry)
 {
 }
 
-SymbolTableEntry* parseSimpleExpression()
+SymbolTableEntry* Parser::parseSimpleExpression()
 {
 }
 
-SymbolTableEntry* parseSimpleExpressionPrime(SymbolTableEntry* prevEntry)
+SymbolTableEntry* Parser::parseSimpleExpressionPrime(SymbolTableEntry* prevEntry)
 {
 }
 
-SymbolTableEntry* parseTerm()
+SymbolTableEntry* Parser::parseTerm()
 {
 }
 
-SymbolTableEntry* parseTermPrime(SymbolTableEntry* prevEntry)
+SymbolTableEntry* Parser::parseTermPrime(SymbolTableEntry* prevEntry)
 {
 }
 
-SymbolTableEntry* parseFactor()
+SymbolTableEntry* Parser::parseFactor()
 {
 }
 
-SymbolTableEntry* parseFactorPrime(SymbolTableEntry* prevEntry)
+SymbolTableEntry* Parser::parseFactorPrime(SymbolTableEntry* prevEntry)
 {
 }
 
@@ -182,4 +183,3 @@ SymbolTable* Parser::getSymbolTable()
 int Parser::totalErrors()
 {
 }
-
