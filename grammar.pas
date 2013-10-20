@@ -1,22 +1,22 @@
 program ::= program id ;
             declarations
             subprogram_declarations
-            compound statement
+            compound_statement
             .
 
 identifier_list ::= id | identifier_list , id
 
 declarations ::= declarations var identifier_list : type ; | ε
 
-type ::= standard type | array [ num .. num ] of standard type
+type ::= standard_type | array [ num .. num ] of standard_type
 
-standard type ::= integer | real
+standard_type ::= integer | real
 
-subprogram_declarations ::= subprogram_declarations subprogram declaration ; | ε
+subprogram_declarations ::= subprogram_declarations subprogram_declaration ; | ε
 
-subprogram declaration ::= subprogram head declarations compound statement
+subprogram_declaration ::= subprogram_head declarations compound_statement
 
-subprogram_head ::= function id arguments : standard type ;
+subprogram_head ::= function id arguments : standard_type ;
                   | procedure id arguments ;
 
 arguments ::= ( parameter list ) | ε
@@ -31,7 +31,7 @@ statement_list ::= statement | statement_list ; statement
 
 statement ::= variable assignop expression
             | procedure_statement
-            | compound statement
+            | compound_statement
             | if expression then statement else statement
             | while expression do statement
 
@@ -41,9 +41,9 @@ procedure_statement ::= id | id ( expression_list )
 
 expression_list ::= expression | expression_list , expression
 
-expression ::= simple expression | simple expression relop simple expression
+expression ::= simple_expression | simple_expression relop simple_expression
 
-simple expression ::= term | sign term | simple expression addop term
+simple_expression ::= term | sign term | simple_expression addop term
 
 term ::= factor | term mulop factor
 
