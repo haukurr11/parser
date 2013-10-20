@@ -1,18 +1,18 @@
 program ::= program id ;
             declarations
-            subprogram declarations
+            subprogram_declarations
             compound statement
             .
 
-identifier list ::= id | identifier list , id
+identifier_list ::= id | identifier_list , id
 
-declarations ::= declarations var identifier list : type ; | ε
+declarations ::= declarations var identifier_list : type ; | ε
 
 type ::= standard type | array [ num .. num ] of standard type
 
 standard type ::= integer | real
 
-subprogram_declarations ::= subprogram declarations subprogram declaration ; | ε
+subprogram_declarations ::= subprogram_declarations subprogram declaration ; | ε
 
 subprogram declaration ::= subprogram head declarations compound statement
 
@@ -21,25 +21,25 @@ subprogram_head ::= function id arguments : standard type ;
 
 arguments ::= ( parameter list ) | ε
 
-parameter list ::= identifier list : type | parameter list ; identifier list : type
+parameter list ::= identifier_list : type | parameter list ; identifier_list : type
 
 compound_statement ::= begin optional statements end
 
-optional statements ::= statement list | ε
+optional statements ::= statement_list | ε
 
-statement list ::= statement | statement list ; statement
+statement_list ::= statement | statement_list ; statement
 
 statement ::= variable assignop expression
-            | procedure statement
+            | procedure_statement
             | compound statement
             | if expression then statement else statement
             | while expression do statement
 
 variable ::= id | id [ expression ]
 
-procedure statement ::= id | id ( expression list )
+procedure_statement ::= id | id ( expression_list )
 
-expression list ::= expression | expression list , expression
+expression_list ::= expression | expression_list , expression
 
 expression ::= simple expression | simple expression relop simple expression
 
@@ -47,6 +47,6 @@ simple expression ::= term | sign term | simple expression addop term
 
 term ::= factor | term mulop factor
 
-factor ::= variable | id ( expression list ) | num | ( expression ) | not factor
+factor ::= variable | id ( expression_list ) | num | ( expression ) | not factor
 
 sign ::= + | -
