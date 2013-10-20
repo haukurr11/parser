@@ -1,8 +1,8 @@
 left recursive:
 identifier_list ::= id ´identifier_list
-´identifier_list ::= ε | , id ´identifier_list
+´identifier_list ::=  , id ´identifier_list | ε
 declarations ::= var identifier_list : type ; declarations | ε
-subprogram_declarations ::= subprogram_declarations subprogram_declaration ; | ε
+subprogram_declarations ::= subprogram_declaration ; subprogram_declarations | ε
 term ::= factor | term mulop factor
 simple_expression ::= term | sign term | simple_expression addop term
 parameter_list ::= identifier_list : type | parameter_list ; identifier_list : type
