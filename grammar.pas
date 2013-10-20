@@ -4,7 +4,8 @@ program ::= program id ;
             compound statement
             .
 
-identifier_list ::= id | identifier_list , id
+identifier ::= id identifier_list'
+'identifier ::= empty string | , id identifier_list'
 
 declarations ::= declarations var identifier_list : type ; | ε
 
