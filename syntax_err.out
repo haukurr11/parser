@@ -1,0 +1,31 @@
+      4 : Var y : real;
+          ^ Expected ';'
+      7 : var t : array[1..10 of real;
+                              ^ Expected ']'
+      8 : var i  integer;
+                 ^ Expected ':'
+     12 :         while (i < 4 do
+                               ^ Expected ')'
+     14 :         ftest := t[1;
+                              ^ Expected ']'
+     15 : end;
+          ^ Expected an identifier
+     17 : procedure ptest(z w real);
+                            ^ Expected ':'
+     18 : var r real;
+                ^ Expected ':'
+     25 :     y := 2.0*(3.14!$);
+                            ^ Illegal character.
+                             ^ Illegal character.
+     27 :      begin
+               ^ Expected THEN
+     38 :      begin
+               ^ Expected DO
+     39 :         y := ftest (x;
+                               ^ Expected ')'
+     41 :      end
+               ^ Expected an identifier
+     42 : .
+          ^ Expected END
+
+Number of errors: 15.
