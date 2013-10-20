@@ -1,9 +1,6 @@
 left recursive:
-
-<<<<<<< HEAD
-identifier ::= id identifier_list'
-'identifier ::= empty string | , id identifier_list'
-
+identifier ::= id identifier_list´
+´identifier ::= ε | , id identifier_list´
 declarations ::= declarations var identifier_list : type ; | ε
 subprogram_declarations ::= subprogram_declarations subprogram_declaration ; | ε
 term ::= factor | term mulop factor
