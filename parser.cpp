@@ -362,7 +362,7 @@ SymbolTableEntry* Parser::parseVariable()
   */
   SymbolTableEntry* st;
   match(tc_ID);
-  parseVariablePrime(SymbolTableEntry* st;);
+  parseVariablePrime(st);
 }
 
 SymbolTableEntry* Parser::parseVariablePrime(SymbolTableEntry* prevEntry)
@@ -372,7 +372,7 @@ SymbolTableEntry* Parser::parseVariablePrime(SymbolTableEntry* prevEntry)
   */
   if(isNext(tc_LBRACKET)) {
     match(tc_LBRACKET);
-    expression();
+    parseExpression();
     match(tc_RBRACKET);
   }
 }
