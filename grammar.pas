@@ -30,7 +30,7 @@ compound_statement ::= begin optional_statements end
 optional_statements ::= statement_list | ε
 
 statement_list ::= statement statement_list´
-statement_list´ ::= statement_list ; statement statement_list´ | ε
+statement_list´ ::= ; statement statement_list´ | ε
 
 statement ::= variable assignop expression
             | procedure_statement

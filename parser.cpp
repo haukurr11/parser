@@ -4,6 +4,8 @@ Parser::Parser(std::istream& input, std::ostream& output)
 {
   m_symbolTable = new SymbolTable();
   m_lexan = new Scanner(m_symbolTable,input,output);
+  m_totalErrors = 0;
+  getToken();
 }
 
 Parser::~Parser()
@@ -14,7 +16,6 @@ Parser::~Parser()
 
 void Parser::parse()
 {
-  getToken();
   parseProgram();
 }
 
@@ -30,7 +31,11 @@ int Parser::totalErrors()
 
 bool Parser::tokenCodeIn(TokenCode tc, const TokenCode list[])
 {
-
+  for(int i=0;i<sizeof list;i++) {
+    if(list[i] == tc)
+      return true;
+  }
+  return false;
 }
 
 void Parser::recover(const TokenCode list[])
@@ -72,6 +77,13 @@ bool Parser::isNext(TokenCode tc)
 
 void Parser::parseProgram()
 {
+  /*
+  program ::= program id ;
+              declarations
+              subprogram_declarations
+              compound_statement
+              .
+  */
   match(tc_PROGRAM);
   match(tc_ID);
   match(tc_SEMICOL);
@@ -83,6 +95,10 @@ void Parser::parseProgram()
 
 void Parser::parseIdentifierList(EntryList& idList)
 {
+  /*
+  identifier_list ::= id identifier_list´
+  identifier_list´ ::=  , id identifier_list´ | ε
+  */
   match(tc_ID);
 }
 
@@ -92,65 +108,186 @@ void Parser::parseIdentifierListPrime(EntryList& idList)
 
 void Parser::parseDeclarations()
 {
+  /*
+  declarations ::= var identifier_list : type ; declarations | ε
+  */
+  EntryList el;
   if(isNext(tc_VAR)) {
+    match(tc_VAR);
     parseIdentifierList();
     match(tc_COLON);
     parseType();
     match(tc_SEMICOL);
-    parseParameterList();
+    parseDeclarations();
   }
 }
 
 void Parser::parseType()
 {
+  /*
+  type ::= standard_type | array [ num .. num ] of standard_type
+  */
+  if(isNext(tc_INTEGER) || isNext(tc_REAL))
+    parseStandardType();
+  else {
+    match(tc_ARRAY);
+    match(tc_LBRACKET);
+    match(tc_NUMBER);
+    match(tc_DOTDOT);
+    match(tc_NUMBER);
+    match(tc_RBRACKET);
+    match(tc_OF);
+    parseStandardType();
+  }
 }
 
 void Parser::parseStandardType()
 {
+  /*
+  standard_type ::= integer | real
+  */
+  if(isNext(tc_INTEGER))
+    match(tc_INTEGER);
+  else if(isNext(tc_REAL))
+    match(tc_REAL);
+  else {
+    std::cout << "error!\n";
+    exit(0);
+  }
 }
 
 void Parser::parseSubprogramDeclarations()
 {
+  /*
+  subprogram_declarations ::= subprogram_declaration ; subprogram_declarations | ε
+  */
+  if(isNext(tc_FUNCTION) || isNext(tc_PROCEDURE)) {
+    parseSubprogramDeclaration();
+    match(tc_SEMICOL);
+    parseSubprogramDeclarations();
+  }
 }
 
 void Parser::parseSubprogramDeclaration()
 {
+  /*
+  subprogram_declaration ::= subprogram_head declarations compound_statement
+  */
+  parseSubprogramHead();
+  parseDeclarations();
+  parseCompoundStatement();
 }
 
 void Parser::parseSubprogramHead()
 {
+  /*
+  subprogram_head ::= function id arguments : standard_type ;
+                  | procedure id arguments ;
+  */
+  if(isNext(tc_FUNCTION)) {
+    match(tc_FUNCTION);
+    match(tc_ID);
+    parseArguments();
+    match(tc_COLON);
+    parseStandardType();
+    match(tc_SEMICOL);
+  }
+  else if(isNext(tc_PROCEDURE)) {
+    match(tc_PROCEDURE);
+    match(tc_ID);
+    parseArguments();
+    match(tc_SEMICOL);
+  }
+  else {
+    std::cout << "error!\n";
+    exit(0);
+  }
 }
 
 void Parser::parseArguments()
 {
+  /*
+  arguments ::= ( parameter_list ) | ε
+  */
+  if(isNext(tc_LPAREN)) {
+    match(tc_LPAREN);
+    parseParameterList();
+    match(tc_RPAREN);
+  }
 }
 
 void Parser::parseParameterList()
 {
+  /*
+  parameter_list ::= identifier_list : type parameter_list´
+  */
+  EntryList el;
+  parseIdentifierList(el);
+  match(tc_COLON);
+  parseType();
+  parseParameterListPrime();
 }
 
 void Parser::parseParameterListPrime()
 {
+  /*
+  parameter_list´ ::= ; identifier_list : type parameter_list´ | ε
+  */
+  EntryList el;
+  if(isNext(tc_SEMICOL)) {
+    match(tc_SEMICOL);
+    parseIdentifierList(el);
+    match(tc_COLON);
+    parseType();
+    parseParameterListPrime();
+  }
 }
 
 void Parser::parseCompoundStatement()
 {
+  /*
+  compound_statement ::= begin optional_statements end
+  */
+  match(tc_BEGIN);
+  parseOptionalStatements();
+  match(tc_END);
 }
 
 void Parser::parseOptionalStatements()
 {
+  /*
+  optional_statements ::= statement_list | ε
+  */
+  if(isNext(tc_ID) || isNext(tc_BEGIN)
+  || isNext(tc_IF) || isNext(tc_WHILE))
+    parseStatementList();
 }
 
 void Parser::parseStatementList()
 {
+  /*
+  statement_list ::= statement statement_list´
+  */
+  parseStatement();
+  parseStatementListPrime();
 }
 
 void Parser::parseStatementListPrime()
 {
+  /*
+  statement_list´ ::= ; statement statement_list´ | ε
+  */
 }
 
 void Parser::parseStatement()
 {
+  /*
+  statement ::= variable assignop expression
+              | procedure_statement
+              | compound_statement
+              | if expression then statement else statement
+              | while expression do statement
+  */
 }
 
 void Parser::parseStatementPrime(SymbolTableEntry* prevEntry)
