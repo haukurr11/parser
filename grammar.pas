@@ -47,7 +47,7 @@ procedure_statement´ ::= ( expression_list ) | ε
 expression_list ::= expression expression_list´
 expression_list´ ::=  , expression expression_list´ | ε
 
-expression ::= simple_expression simple_expression´
+expression ::= simple_expression expression´
 expression´ ::= relop simple_expression | ε
 
 simple_expression ::= term simple_expression´ | sign term simple_expression´
