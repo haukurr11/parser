@@ -1,16 +1,23 @@
 left recursive:
-identifier_list ::= id ´identifier_list
-´identifier_list ::=  , id ´identifier_list | ε
+identifier_list ::= id identifier_list´
+identifier_list´ ::=  , id identifier_list´ | ε
+
 declarations ::= var identifier_list : type ; declarations | ε
+
 subprogram_declarations ::= subprogram_declaration ; subprogram_declarations | ε
-term ::= factor ´term
-´term ::= mulop factor ´term | ε
+
+term ::= factor term´
+term´ ::= mulop factor term´ | ε
+
 simple_expression ::= term | sign term | simple_expression addop term
+
 parameter_list ::= identifier_list : type | parameter_list ; identifier_list : type
-expression_list ::= expression ´expression_list
-´expression_list ::=  , expression ´expression_list | ε
-statement_list ::= statement ´statement_list
-´statement_list ::= statement_list ; statement ´statement_list | ε
+
+expression_list ::= expression expression_list´
+expression_list´ ::=  , expression expression_list´ | ε
+
+statement_list ::= statement statement_list´
+statement_list´ ::= statement_list ; statement statement_list´ | ε
 
 
 non-left recursive:
