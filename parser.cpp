@@ -99,7 +99,8 @@ void Parser::parseIdentifierList(EntryList& idList)
   identifier_list ::= id identifier_list´
   */
   match(tc_ID);
-  parseIdentifierListPrime();
+  EntryList el;
+  parseIdentifierListPrime(el);
 }
 
 void Parser::parseIdentifierListPrime(EntryList& idList)
@@ -110,7 +111,8 @@ void Parser::parseIdentifierListPrime(EntryList& idList)
   if(isNext(tc_COMMA)) {
     match(tc_COMMA);
     match(tc_ID);
-    parseIdentifierListPrime();
+    EntryList el;
+    parseIdentifierListPrime(el);
   }
 }
 
@@ -122,7 +124,8 @@ void Parser::parseDeclarations()
   EntryList el;
   if(isNext(tc_VAR)) {
     match(tc_VAR);
-    parseIdentifierList();
+    EntryList el;
+    parseIdentifierList(el);
     match(tc_COLON);
     parseType();
     match(tc_SEMICOL);
@@ -300,6 +303,32 @@ void Parser::parseStatement()
               | if expression then statement else statement
               | while expression do statement
   */
+  if(isNext(tc_ID)) {
+    match(tc_ID);
+    SymbolTableEntry* st;
+    parseStatementPrime(st);
+  }
+  else if(isNext(tc_BEGIN)) {
+    parseCompoundStatement();
+  }
+  else if(isNext(tc_IF)) {
+    match(tc_IF);
+    parseExpression();
+    match(tc_THEN);
+    parseStatement();
+    match(tc_ELSE);
+    parseStatement();
+  }
+  else if(isNext(tc_WHILE)) {
+    match(tc_WHILE);
+    parseExpression();
+    match(tc_DO);
+    parseStatement();
+  }
+  else {
+    std::cout << "error!\n";
+    exit(0);
+  }
 }
 
 void Parser::parseStatementPrime(SymbolTableEntry* prevEntry)
@@ -307,6 +336,22 @@ void Parser::parseStatementPrime(SymbolTableEntry* prevEntry)
   /*
   statement´ ::= assignop expression | [ expression ] assignop expression | ( expression_list ) | ε
   */
+  if(isNext(tc_ASSIGNOP)) {
+    match(tc_ASSIGNOP);
+    parseExpression();
+  }
+  else if(isNext(tc_LBRACKET)) {
+    match(tc_LBRACKET);
+    parseExpression();
+    match(tc_RBRACKET);
+    match(tc_ASSIGNOP);
+    parseExpression();
+  }
+  else if(isNext(tc_LPAREN)) {
+    match(tc_LPAREN);
+    parseExpressionList();
+    match(tc_RPAREN);
+  }
 }
 
 SymbolTableEntry* Parser::parseVariable()
