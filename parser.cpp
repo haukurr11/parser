@@ -382,6 +382,9 @@ void Parser::parseProcedureStatement()
   /*
   procedure_statement ::= id procedure_statement´
   */
+  match(tc_ID);
+  SymbolTableEntry* st;
+  parseProcedureStatementPrime(st);
 }
 
 void Parser::parseProcedureStatementPrime(SymbolTableEntry* prevEntry)
@@ -389,6 +392,11 @@ void Parser::parseProcedureStatementPrime(SymbolTableEntry* prevEntry)
   /*
   procedure_statement´ ::= ( expression_list ) | ε
   */
+  if(isNext(tc_LPAREN)){
+    SymbolTableEntry* st;
+    parseExpressionList(st);
+    match(tc_RPAREN);
+  }
 }
 
 void Parser::parseExpressionList(SymbolTableEntry* prevEntry)
