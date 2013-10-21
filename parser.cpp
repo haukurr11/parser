@@ -373,46 +373,79 @@ SymbolTableEntry* Parser::parseVariablePrime(SymbolTableEntry* prevEntry)
 
 void Parser::parseProcedureStatement()
 {
+  /*
+  procedure_statement ::= id procedure_statement´
+  */
 }
 
 void Parser::parseProcedureStatementPrime(SymbolTableEntry* prevEntry)
 {
+  /*
+  procedure_statement´ ::= ( expression_list ) | ε
+  */
 }
 
 void Parser::parseExpressionList(SymbolTableEntry* prevEntry)
 {
+  /*
+  expression_list ::= expression expression_list´
+  */
 }
 
 void Parser::parseExpressionListPrime(EntryList& expList)
 {
+  /*
+  expression_list´ ::=  , expression expression_list´ | ε
+  */
 }
 
 SymbolTableEntry* Parser::parseExpression()
 {
+/*
+expression ::= simple_expression expression´
+*/
 }
 
 SymbolTableEntry* Parser::parseExpressionPrime(SymbolTableEntry* prevEntry)
 {
+/*
+expression´ ::= relop simple_expression | ε
+*/
 }
 
 SymbolTableEntry* Parser::parseSimpleExpression()
 {
+/*
+simple_expression ::= term simple_expression´ | sign term simple_expression´
+*/
 }
 
 SymbolTableEntry* Parser::parseSimpleExpressionPrime(SymbolTableEntry* prevEntry)
 {
+/*
+simple_expression´ ::= addop term simple_expression´ | ε
+*/
 }
 
 SymbolTableEntry* Parser::parseTerm()
 {
+/*
+term ::= factor term´
+*/
 }
 
 SymbolTableEntry* Parser::parseTermPrime(SymbolTableEntry* prevEntry)
 {
+/*
+term´ ::= mulop factor term´ | ε
+*/
 }
 
 SymbolTableEntry* Parser::parseFactor()
 {
+/*
+factor ::= variable | id ( expression_list ) | num | ( expression ) | not factor
+*/
 }
 
 SymbolTableEntry* Parser::parseFactorPrime(SymbolTableEntry* prevEntry)
