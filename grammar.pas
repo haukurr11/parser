@@ -1,9 +1,12 @@
 needs left-factoring:
-variable ::= id | id [ expression ]
-procedure_statement ::= id | id ( expression_list )
+variable ::= id variable´
+variable´ ::= [ expression ] | ε
 
-expression ::= simple_expression ´simple_expression 
-´expression ::= relop simple_expression | ε
+procedure_statement ::= id procedure_statement´
+procedure_statement´ ::= ( expression_list ) | ε
+
+expression ::= simple_expression simple_expression´
+expression´ ::= relop simple_expression | ε
 
 does not need left-factoring
 program ::= program id ;
