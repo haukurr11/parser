@@ -1,7 +1,36 @@
 #include "parser.h"
 
+Parser::Parser(std::istream& input, std::ostream& output)
+{
+  m_symbolTable = new SymbolTable();
+  m_lexan = new Scanner(m_symbolTable,input,output);
+}
+
+Parser::~Parser()
+{
+  delete m_lexan;
+  delete m_symbolTable;
+}
+
+void Parser::parse()
+{
+  getToken();
+  parseProgram();
+}
+
+SymbolTable* Parser::getSymbolTable()
+{
+  return m_symbolTable;
+}
+
+int Parser::totalErrors()
+{
+  return m_totalErrors;
+}
+
 bool Parser::tokenCodeIn(TokenCode tc, const TokenCode list[])
 {
+
 }
 
 void Parser::recover(const TokenCode list[])
@@ -10,10 +39,16 @@ void Parser::recover(const TokenCode list[])
 
 void Parser::getToken()
 {
+  m_currentToken = m_lexan->nextToken();
 }
 
 void Parser::match(TokenCode tc)
 {
+  if(getTokenCode() != tc) {
+    std::cout << "error!";
+    exit(0);
+  }
+  getToken();
 }
 
 void Parser::setError(const std::string& err)
@@ -26,18 +61,29 @@ void Parser::expectedTokenCode(TokenCode tc)
 
 TokenCode Parser::getTokenCode()
 {
+  return m_currentToken->getTokenCode();
 }
 
 bool Parser::isNext(TokenCode tc)
 {
+  getToken();
+  return tc == getTokenCode();
 }
 
 void Parser::parseProgram()
 {
+  match(tc_PROGRAM);
+  match(tc_ID);
+  match(tc_SEMICOL);
+  parseDeclarations();
+  parseSubprogramDeclarations();
+  parseCompoundStatement();
+  match(tc_DOT);
 }
 
 void Parser::parseIdentifierList(EntryList& idList)
 {
+  match(tc_ID);
 }
 
 void Parser::parseIdentifierListPrime(EntryList& idList)
@@ -46,6 +92,13 @@ void Parser::parseIdentifierListPrime(EntryList& idList)
 
 void Parser::parseDeclarations()
 {
+  if(isNext(tc_VAR)) {
+    parseIdentifierList();
+    match(tc_COLON);
+    parseType();
+    match(tc_SEMICOL);
+    parseParameterList();
+  }
 }
 
 void Parser::parseType()
@@ -162,24 +215,13 @@ SymbolTableEntry* Parser::parseFactorPrime(SymbolTableEntry* prevEntry)
 
 void Parser::parseSign()
 {
+  if(isNext(tc_ADDOP)){
+    OpType op = m_currentToken->getOpType();
+    if(op != op_PLUS || op != op_MINUS) {
+      std::cout << "error!";
+      exit(0);
+      }
+    match(tc_ADDOP);
+  }
 }
 
-Parser::Parser(std::istream& input, std::ostream& output)
-{
-}
-
-Parser::~Parser()
-{
-}
-
-void Parser::parse()
-{
-}
-
-SymbolTable* Parser::getSymbolTable()
-{
-}
-
-int Parser::totalErrors()
-{
-}

@@ -4,4 +4,5 @@
 
 int main() {
    Parser parser(std::cin,std::cout);
+   parser.parse();
 }

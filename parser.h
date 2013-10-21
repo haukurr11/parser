@@ -35,7 +35,7 @@ private:
   void parseProgram();
   void parseIdentifierList(EntryList& idList);
   void parseIdentifierListPrime(EntryList& idList);
-   void parseDeclarations();
+  void parseDeclarations();
   void parseType();
   void parseStandardType();
   void parseSubprogramDeclarations();
