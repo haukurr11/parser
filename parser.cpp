@@ -349,7 +349,8 @@ void Parser::parseStatementPrime(SymbolTableEntry* prevEntry)
   }
   else if(isNext(tc_LPAREN)) {
     match(tc_LPAREN);
-    parseExpressionList();
+    SymbolTableEntry* st;
+    parseExpressionList(st);
     match(tc_RPAREN);
   }
 }
