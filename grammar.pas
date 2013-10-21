@@ -8,7 +8,8 @@ term ::= factor ´term
 simple_expression ::= term | sign term | simple_expression addop term
 parameter_list ::= identifier_list : type | parameter_list ; identifier_list : type
 expression_list ::= expression | expression_list , expression
-statement_list ::= statement | statement_list ; statement
+statement_list ::= statement ´statement_list
+´statement_list ::= statement_list ; statement ´statement_list | ε
 
 
 non-left recursive:
