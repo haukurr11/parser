@@ -404,6 +404,9 @@ void Parser::parseExpressionList(SymbolTableEntry* prevEntry)
   /*
   expression_list ::= expression expression_list´
   */
+  parseExpression();
+  EntryList el;
+  parseExpressionListPrime(el);
 }
 
 void Parser::parseExpressionListPrime(EntryList& expList)
@@ -411,6 +414,12 @@ void Parser::parseExpressionListPrime(EntryList& expList)
   /*
   expression_list´ ::=  , expression expression_list´ | ε
   */
+  if(isNext(tc_COMMA)){
+    match(tc_COMMA);
+    parseExpression();
+    EntryList el;
+    parseExpressionListPrime(el);
+  }
 }
 
 SymbolTableEntry* Parser::parseExpression()
@@ -418,6 +427,9 @@ SymbolTableEntry* Parser::parseExpression()
   /*
   expression ::= simple_expression expression´
   */
+  parseSimpleExpression();
+  SymbolTableEntry* st;
+  parseExpressionPrime(st);
 }
 
 SymbolTableEntry* Parser::parseExpressionPrime(SymbolTableEntry* prevEntry)
@@ -425,6 +437,10 @@ SymbolTableEntry* Parser::parseExpressionPrime(SymbolTableEntry* prevEntry)
   /*
   expression´ ::= relop simple_expression | ε
   */
+  if(isNext(tc_RELOP)) {
+    match(tc_RELOP);
+    parseSimpleExpression();
+  }
 }
 
 SymbolTableEntry* Parser::parseSimpleExpression()
