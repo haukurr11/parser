@@ -9,9 +9,11 @@ subprogram_declarations ::= subprogram_declaration ; subprogram_declarations | �
 term ::= factor term´
 term´ ::= mulop factor term´ | ε
 
-simple_expression ::= term | sign term | simple_expression addop term
+simple_expression ::= term simple_expression´ | sign term simple_expression´
+simple_expression´ ::= addop term simple_expression´ | ε
 
-parameter_list ::= identifier_list : type | parameter_list ; identifier_list : type
+parameter_list ::= identifier_list : type parameter_list´
+parameter_list´ ::= ; identifier_list : type parameter_list´ | ε
 
 expression_list ::= expression expression_list´
 expression_list´ ::=  , expression expression_list´ | ε
