@@ -1,6 +1,7 @@
 needs left-factoring:
 variable ::= id | id [ expression ]
 procedure_statement ::= id | id ( expression_list )
+expression ::= simple_expression | simple_expression relop simple_expression
 
 does not need left-factoring
 program ::= program id ;
@@ -31,7 +32,6 @@ statement ::= variable assignop expression
             | while expression do statement
 
 
-expression ::= simple_expression | simple_expression relop simple_expression
 
 factor ::= variable | id ( expression_list ) | num | ( expression ) | not factor
 
