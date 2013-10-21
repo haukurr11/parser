@@ -448,9 +448,9 @@ SymbolTableEntry* Parser::parseSimpleExpression()
   /*
   simple_expression ::= term simple_expression´ | sign term simple_expression´
   */
-    SimpleTableEntry* st;
-	parseFactor();
-	parseSimpleExpressionPrime(st);
+  parseFactor();
+  SymbolTableEntry* st;
+  parseSimpleExpressionPrime(st);
 }
 
 SymbolTableEntry* Parser::parseSimpleExpressionPrime(SymbolTableEntry* prevEntry)
@@ -458,12 +458,12 @@ SymbolTableEntry* Parser::parseSimpleExpressionPrime(SymbolTableEntry* prevEntry
   /*
   simple_expression´ ::= addop term simple_expression´ | ε
   */
-  if(nextToken(tc_ADDOP) {
-	SimpleTableEntry* st;
-	match(tc_ADDOP)
-	parseTerm();
-	parseSimpleExpressionPrime(st);
-	}
+  if(isNext(tc_ADDOP)) {
+    match(tc_ADDOP);
+    parseTerm();
+    SymbolTableEntry* st;
+    parseSimpleExpressionPrime(st);
+  }
 }
 
 SymbolTableEntry* Parser::parseTerm()
