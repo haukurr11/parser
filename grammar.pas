@@ -32,11 +32,11 @@ optional_statements ::= statement_list | ε
 statement_list ::= statement statement_list´
 statement_list´ ::= ; statement statement_list´ | ε
 
-statement ::= variable assignop expression
-            | procedure_statement
+statement ::= id statement´
             | compound_statement
             | if expression then statement else statement
             | while expression do statement
+statement´ ::= assignop expression | [ expression ] assignop expression | ( expression_list ) | ε
 
 variable ::= id variable´
 variable´ ::= [ expression ] | ε

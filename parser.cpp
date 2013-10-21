@@ -97,13 +97,21 @@ void Parser::parseIdentifierList(EntryList& idList)
 {
   /*
   identifier_list ::= id identifier_list´
-  identifier_list´ ::=  , id identifier_list´ | ε
   */
   match(tc_ID);
+  parseIdentifierListPrime();
 }
 
 void Parser::parseIdentifierListPrime(EntryList& idList)
 {
+  /*
+  identifier_list´ ::=  , id identifier_list´ | ε
+  */
+  if(isNext(tc_COMMA)) {
+    match(tc_COMMA);
+    match(tc_ID);
+    parseIdentifierListPrime();
+  }
 }
 
 void Parser::parseDeclarations()
@@ -277,13 +285,17 @@ void Parser::parseStatementListPrime()
   /*
   statement_list´ ::= ; statement statement_list´ | ε
   */
+  if(isNext(tc_SEMICOL)) {
+    match(tc_SEMICOL);
+    parseStatement();
+    parseStatementListPrime();
+  }
 }
 
 void Parser::parseStatement()
 {
   /*
-  statement ::= variable assignop expression
-              | procedure_statement
+  statement ::= id statement´
               | compound_statement
               | if expression then statement else statement
               | while expression do statement
@@ -292,6 +304,9 @@ void Parser::parseStatement()
 
 void Parser::parseStatementPrime(SymbolTableEntry* prevEntry)
 {
+  /*
+  statement´ ::= assignop expression | [ expression ] assignop expression | ( expression_list ) | ε
+  */
 }
 
 SymbolTableEntry* Parser::parseVariable()
