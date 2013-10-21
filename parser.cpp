@@ -357,6 +357,9 @@ void Parser::parseStatementPrime(SymbolTableEntry* prevEntry)
 
 SymbolTableEntry* Parser::parseVariable()
 {
+  /*
+  variable ::= id variable´
+  */
   SymbolTableEntry* st;
   match(tc_ID);
   parseVariablePrime(SymbolTableEntry* st;);
@@ -364,6 +367,9 @@ SymbolTableEntry* Parser::parseVariable()
 
 SymbolTableEntry* Parser::parseVariablePrime(SymbolTableEntry* prevEntry)
 {
+  /*
+  variable´ ::= [ expression ] | ε
+  */
   if(isNext(tc_LBRACKET)) {
     match(tc_LBRACKET);
     expression();
@@ -401,51 +407,51 @@ void Parser::parseExpressionListPrime(EntryList& expList)
 
 SymbolTableEntry* Parser::parseExpression()
 {
-/*
-expression ::= simple_expression expression´
-*/
+  /*
+  expression ::= simple_expression expression´
+  */
 }
 
 SymbolTableEntry* Parser::parseExpressionPrime(SymbolTableEntry* prevEntry)
 {
-/*
-expression´ ::= relop simple_expression | ε
-*/
+  /*
+  expression´ ::= relop simple_expression | ε
+  */
 }
 
 SymbolTableEntry* Parser::parseSimpleExpression()
 {
-/*
-simple_expression ::= term simple_expression´ | sign term simple_expression´
-*/
+  /*
+  simple_expression ::= term simple_expression´ | sign term simple_expression´
+  */
 }
 
 SymbolTableEntry* Parser::parseSimpleExpressionPrime(SymbolTableEntry* prevEntry)
 {
-/*
-simple_expression´ ::= addop term simple_expression´ | ε
-*/
+  /*
+  simple_expression´ ::= addop term simple_expression´ | ε
+  */
 }
 
 SymbolTableEntry* Parser::parseTerm()
 {
-/*
-term ::= factor term´
-*/
+  /*
+  term ::= factor term´
+  */
 }
 
 SymbolTableEntry* Parser::parseTermPrime(SymbolTableEntry* prevEntry)
 {
-/*
-term´ ::= mulop factor term´ | ε
-*/
+  /*
+  term´ ::= mulop factor term´ | ε
+  */
 }
 
 SymbolTableEntry* Parser::parseFactor()
 {
-/*
-factor ::= variable | id ( expression_list ) | num | ( expression ) | not factor
-*/
+  /*
+  factor ::= variable | id ( expression_list ) | num | ( expression ) | not factor
+  */
 }
 
 SymbolTableEntry* Parser::parseFactorPrime(SymbolTableEntry* prevEntry)
@@ -454,6 +460,9 @@ SymbolTableEntry* Parser::parseFactorPrime(SymbolTableEntry* prevEntry)
 
 void Parser::parseSign()
 {
+  /*
+  sign ::= + | -
+  */
   if(isNext(tc_ADDOP)){
     OpType op = m_currentToken->getOpType();
     if(op != op_PLUS || op != op_MINUS) {
