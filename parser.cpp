@@ -357,10 +357,18 @@ void Parser::parseStatementPrime(SymbolTableEntry* prevEntry)
 
 SymbolTableEntry* Parser::parseVariable()
 {
+	SymbolTableEntry* st;
+	match(tc_ID);
+	parseVariablePrime(SymbolTableEntry* st;);
 }
 
 SymbolTableEntry* Parser::parseVariablePrime(SymbolTableEntry* prevEntry)
 {
+	if(isNext(tc_LBRACKET)) {
+		match(tc_LBRACKET);
+		expression();
+		match(tc_RBRACKET);
+	}
 }
 
 void Parser::parseProcedureStatement()
