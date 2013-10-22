@@ -111,8 +111,7 @@ void Parser::parseIdentifierListPrime(EntryList& idList)
   if(isNext(tc_COMMA)) {
     match(tc_COMMA);
     match(tc_ID);
-    EntryList el;
-    parseIdentifierListPrime(el);
+    parseIdentifierListPrime(idList);
   }
 }
 
@@ -349,8 +348,7 @@ void Parser::parseStatementPrime(SymbolTableEntry* prevEntry)
   }
   else if(isNext(tc_LPAREN)) {
     match(tc_LPAREN);
-    SymbolTableEntry* st;
-    parseExpressionList(st);
+    parseExpressionList(prevEntry);
     match(tc_RPAREN);
   }
 }
@@ -360,8 +358,8 @@ SymbolTableEntry* Parser::parseVariable()
   /*
   variable ::= id variable´
   */
-  SymbolTableEntry* st;
   match(tc_ID);
+  SymbolTableEntry* st;
   parseVariablePrime(st);
 }
 
@@ -393,8 +391,7 @@ void Parser::parseProcedureStatementPrime(SymbolTableEntry* prevEntry)
   procedure_statement´ ::= ( expression_list ) | ε
   */
   if(isNext(tc_LPAREN)){
-    SymbolTableEntry* st;
-    parseExpressionList(st);
+    parseExpressionList(prevEntry);
     match(tc_RPAREN);
   }
 }
@@ -417,8 +414,7 @@ void Parser::parseExpressionListPrime(EntryList& expList)
   if(isNext(tc_COMMA)){
     match(tc_COMMA);
     parseExpression();
-    EntryList el;
-    parseExpressionListPrime(el);
+    parseExpressionListPrime(expList);
   }
 }
 
@@ -448,9 +444,20 @@ SymbolTableEntry* Parser::parseSimpleExpression()
   /*
   simple_expression ::= term simple_expression´ | sign term simple_expression´
   */
-  parseFactor();
   SymbolTableEntry* st;
-  parseSimpleExpressionPrime(st);
+  if(isNext(tc_ID)) {
+    parseTerm();
+    parseSimpleExpressionPrime(st);
+  }
+  else if(isNext(tc_ADDOP)) {
+    parseSign();
+    parseTerm();
+    parseSimpleExpressionPrime(st);
+  }
+  else {
+    std::cout << "error!\n";
+    exit(0);
+  }
 }
 
 SymbolTableEntry* Parser::parseSimpleExpressionPrime(SymbolTableEntry* prevEntry)
@@ -461,8 +468,7 @@ SymbolTableEntry* Parser::parseSimpleExpressionPrime(SymbolTableEntry* prevEntry
   if(isNext(tc_ADDOP)) {
     match(tc_ADDOP);
     parseTerm();
-    SymbolTableEntry* st;
-    parseSimpleExpressionPrime(st);
+    parseSimpleExpressionPrime(prevEntry);
   }
 }
 
@@ -471,6 +477,9 @@ SymbolTableEntry* Parser::parseTerm()
   /*
   term ::= factor term´
   */
+  parseFactor();
+  SymbolTableEntry* st;
+  parseTermPrime(st);
 }
 
 SymbolTableEntry* Parser::parseTermPrime(SymbolTableEntry* prevEntry)
@@ -478,6 +487,10 @@ SymbolTableEntry* Parser::parseTermPrime(SymbolTableEntry* prevEntry)
   /*
   term´ ::= mulop factor term´ | ε
   */
+  if(isNext(tc_MULOP)) {
+    parseFactor();
+    parseTermPrime(prevEntry);
+  }
 }
 
 SymbolTableEntry* Parser::parseFactor()
