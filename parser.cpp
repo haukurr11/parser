@@ -496,12 +496,45 @@ SymbolTableEntry* Parser::parseTermPrime(SymbolTableEntry* prevEntry)
 SymbolTableEntry* Parser::parseFactor()
 {
   /*
-  factor ::= variable | id ( expression_list ) | num | ( expression ) | not factor
+  factor ::= id factor´ | num | ( expression ) | not factor
   */
+  if(isNext(tc_ID)) {
+    match(tc_ID);
+    parseFactorPrime();
+  }
+  else if(isNext(tc_NUMBER)) {
+    match(tc_NUMBER);
+  }
+  else if(isNext(tc_LPAREN)) {
+    match(tc_LPAREN);
+    parseExpression();
+    match(tc_RPAREN);
+  }
+  else if(isNext(tc_NOT)) {
+    match(tc_NOT);
+    parseFactor();
+  }
+  else {
+    std::cout << "ERROR!\n";
+    exit(0);
+  }
 }
 
 SymbolTableEntry* Parser::parseFactorPrime(SymbolTableEntry* prevEntry)
 {
+  /*
+  factor´ ::= [ expression ] | ( expression_list) | ε
+  */
+  if(isNext(tc_LBRACKET)) {
+    match(tc_LBRACKET);
+    parseExpression();
+    match(tc_RBRACKET);
+  }
+  else if(isNext(tc_LPAREN)) {
+    match(tc_LPAREN);
+    parseExpressionList();
+    match(tc_RPAREN);
+  }
 }
 
 void Parser::parseSign()
