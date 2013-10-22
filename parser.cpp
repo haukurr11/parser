@@ -491,8 +491,7 @@ SymbolTableEntry* Parser::parseTerm()
   /*
   term ::= factor term´
   */
-  parseFactor();
-  SymbolTableEntry* st;
+  SymbolTableEntry* st = parseFactor();
   parseTermPrime(st);
 }
 
@@ -503,8 +502,8 @@ SymbolTableEntry* Parser::parseTermPrime(SymbolTableEntry* prevEntry)
   */
   if(isNext(tc_MULOP)) {
     match(tc_MULOP);
-    parseFactor();
-    parseTermPrime(prevEntry);
+    SymbolTableEntry* st = parseFactor();
+    parseTermPrime(st);
   }
 }
 

@@ -56,6 +56,7 @@ simple_expression´ ::= addop term simple_expression´ | ε
 term ::= factor term´
 term´ ::= mulop factor term´ | ε
 
-factor ::= variable | id ( expression_list ) | num | ( expression ) | not factor
+factor ::= id factor´ | num | ( expression ) | not factor
+factor´ ::= [ expression ] | ( expression_list) | ε
 
 sign ::= + | -
