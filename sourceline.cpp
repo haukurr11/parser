@@ -22,7 +22,7 @@ SourceLine::SourceLine()
   m_line = "";
   m_firstLexemeColumn = 0;
   m_lastLexemeColumn = 0;
-  m_lineNo = 0;
+  m_lineNo = 1;
 }
 
 void SourceLine::clearLine()
@@ -40,7 +40,7 @@ void SourceLine::printErrors()
 void SourceLine::buildLine(const std::string& str)
 {
   m_line += str;
-  m_firstLexemeColumn = m_lastLexemeColumn;
+  m_firstLexemeColumn = m_lastLexemeColumn+1;
   m_lastLexemeColumn += str.size();
 }
 
@@ -72,4 +72,5 @@ void SourceLine::newLine()
   m_lineNo++;
   m_firstLexemeColumn = 0;
   m_lastLexemeColumn = 0;
+  m_errors.clear();
 }

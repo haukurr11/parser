@@ -54,10 +54,17 @@ Token* Scanner::nextToken(void)
   TokenCode tCode;
   std::string lex;
   do {
-  tCode = static_cast<TokenCode>(m_lexer->yylex());
+    tCode = static_cast<TokenCode>(m_lexer->yylex());
+    lex = m_lexer->YYText();
+    if(tCode == tc_NEWLINE) {
+      if(m_sourceLine.hasError()) {
+        m_sourceLine.printLine();
+      }
+      m_sourceLine.newLine();
+    }
+    m_sourceLine.buildLine(lex);
   } while(tCode == tc_SPACE || tCode == tc_COMMENT ||
          tCode == tc_NEWLINE || tCode == tc_TAB);
-  lex = m_lexer->YYText();
   //Change the lexeme to lowercase(case insensitive)
   std::transform( lex.begin(), lex.end(), lex.begin(),::tolower );
   if(tCode == tc_ID || tCode == tc_NUMBER) {
@@ -67,4 +74,14 @@ Token* Scanner::nextToken(void)
     setCurrentToken(tCode,Type,Oper);
   }
   return &m_currentToken;
+}
+
+void Scanner::flushSourceLine(void)
+{
+  m_sourceLine.printLine();
+}
+
+void Scanner::addError(std::string error)
+{
+  m_sourceLine.addError(error);
 }
