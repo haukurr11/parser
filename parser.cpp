@@ -58,9 +58,10 @@ void Parser::match(TokenCode tc)
   }
   getToken();
 }
-
+//Sets the correct error message which is displayed if an error occurs.
 void Parser::setError(const std::string& err)
 {
+  m_lexan->addError(err);
 }
 
 void Parser::expectedTokenCode(TokenCode tc)

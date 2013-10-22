@@ -4,6 +4,7 @@
 Scanner::Scanner(SymbolTable* symbols, std::istream& input, std::ostream& output)
 {
  m_symbolTable = symbols;
+ m_sourceLine = new SourcLine(1000);
  m_lexer = new yyFlexLexer(&input,&output);
 }
 /*
