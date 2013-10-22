@@ -11,7 +11,6 @@ Parser::Parser(std::istream& input, std::ostream& output)
 Parser::~Parser()
 {
   delete m_lexan;
-  delete m_symbolTable;
 }
 
 void Parser::parse()
@@ -505,7 +504,6 @@ SymbolTableEntry* Parser::parseSimpleExpression()
   }
   else {
     std::cout << "error!\n";
-    std::cout << m_currentToken->toString(m_currentToken) << " ";
     exit(0);
   }
   std::cout << " ]";
@@ -541,6 +539,7 @@ SymbolTableEntry* Parser::parseTermPrime(SymbolTableEntry* prevEntry)
   term´ ::= mulop factor term´ | ε
   */
   if(isNext(tc_MULOP)) {
+    match(tc_MULOP);
     parseFactor();
     parseTermPrime(prevEntry);
   }
@@ -601,12 +600,11 @@ void Parser::parseSign()
   std::cout << "[Sign ";
   if(isNext(tc_ADDOP)){
     OpType op = m_currentToken->getOpType();
-    if(op != op_PLUS || op != op_MINUS) {
+    if(op != op_PLUS && op != op_MINUS) {
       std::cout << "error!";
       exit(0);
-      }
+    }
     match(tc_ADDOP);
   }
   std::cout << " ]";
 }
-
