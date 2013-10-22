@@ -1,0 +1,220 @@
+[Program
+     PROGRAM 
+	 ID(test)(test)
+	 SEMICOL 
+     [Declarations VAR 
+	      [IDList ID(x)(x)  ] COLON 
+		  [Type [StandardType INTEGER  ] ]
+		  SEMICOL 
+		  [Declarations VAR 
+				[IDList ID(y)(y)  ]
+				COLON 
+				[Type [StandardType REAL  ] ]
+				SEMICOL [Declarations  ] ] 
+	  ]
+	  [SubProgramDeclarations 
+			[SubProgramDeclaration 
+				[SubProgramHead 
+				   FUNCTION ID(test)(test) 
+				   [Arguments 
+						LPAREN 
+						[ParameterList 
+							[IDList 
+								ID(x)(x)  ]
+						COLON 
+						[Type 
+							[StandardType 
+								REAL  ] ] ]
+						RPAREN  ]
+				   COLON 
+				   [StandardType 
+						REAL  ]
+					SEMICOL  ]
+				[Declarations VAR 
+					[IDList 
+						ID(t)(t) ]
+					COLON 
+					[Type 
+						ARRAY
+						LBRACKET
+						NUMBER(1)(1)
+						DOTDOT
+						NUMBER(10)(10)
+						RBRACKET 
+						OF 
+						[StandardType 
+							REAL  ] ]
+					 SEMICOL 
+					 [Declarations 
+						VAR 
+						[IDList ID(i)(i)  ]
+						COLON 
+						[Type 
+							[StandardType 
+								INTEGER  ] ]
+						SEMICOL 
+						[Declarations  ] ] ]
+				[CompoundStatement 
+					BEGIN 
+					[OptionalStatements 
+						[StatementList 
+							[Statement 
+								ID(i)(i) 
+								ASSIGNOP
+								[Expression
+									[SimpleExpression
+										[Term 
+											[Factor 
+												NUMBER(0)(0) ] ] ] ] ]
+												SEMICOL 
+												[Statement 
+													ID(t)(t) 
+													LBRACKET 
+													[Expression 
+														[SimpleExpression 
+															[Term 
+																[Factor 
+																	NUMBER(1)(1)  ] ] ] ]
+													RBRACKET 
+													ASSIGNOP 
+													[Expression 
+														[SimpleExpression 
+															[Sign 
+																ADDOP(MINUS)(UMINUS)  ]
+															[Term 
+																[Factor 
+																	NUMBER(2.0)(2.0)  ]
+																MULOP(MULT)(ADD) 
+																[Factor 
+																	ID(x)(x)  ] ] ] ] ]
+												SEMICOL 
+												[Statement 
+													WHILE 
+													[Expression 
+														[SimpleExpression 
+															[Term 
+																[Factor 
+																	LPAREN 
+																[Expression 
+																	[SimpleExpression 
+																		[Term 
+																			[Factor 
+																				ID(i)(i)  ] ] ]
+																	RELOP(LT)(MOD) 
+																	[SimpleExpression 
+																		[Term 
+																			[Factor 
+																				NUMBER(4)(4)  ] ] ] ]
+																RPAREN  ] ] ] ]
+													DO 
+													[Statement 
+														ID(i)(i) 
+														ASSIGNOP 
+														[Expression 
+															[SimpleExpression 
+																[Term 
+																	[Factor 
+																		ID(i)(i)  ] ]
+																ADDOP(PLUS)(LABEL) 
+																[Term 
+																	[Factor 
+																		NUMBER(1)(1)  ] ] ] ] ] ]
+																SEMICOL
+												[Statement 
+													ID(test)(test) 
+													ASSIGNOP 
+													[Expression 
+														[SimpleExpression 
+															[Term 
+																[Factor 
+																	ID(t)(t) 
+																	LBRACKET 
+																	[Expression 
+																		[SimpleExpression 
+																			[Term 
+																				[Factor 
+																					NUMBER(1)(1)  ] ] ] ]
+																	RBRACKET  ] ] ] ] ] ] ]
+				END  ] ]
+			SEMICOL
+			[SubProgramDeclarations  ] ]
+	[CompoundStatement 
+		BEGIN 
+		[OptionalStatements 
+			[StatementList 
+				[Statement 
+					ID(y)(y) 
+					ASSIGNOP 
+					[Expression 
+						[SimpleExpression
+							[Term 
+								[Factor 
+									NUMBER(2.0)(2.0)  ]
+								MULOP(MULT)(ADD) 
+								[Factor 
+									LPAREN 
+									[Expression 
+										[SimpleExpression 
+											[Term 
+												[Factor 
+													NUMBER(3.14)(3.14)  ] ] ] ]
+									RPAREN  ] ] ] ] ]
+				SEMICOL 
+				[Statement 
+					IF 
+					[Expression 
+						[SimpleExpression 
+							[Term 
+								[Factor ID(x)(x)  ] ] ]
+						RELOP(GT)(OR) 
+						[SimpleExpression
+							[Term 
+								[Factor 
+									NUMBER(2)(2)  ] ] ] ]
+					THEN 
+					[Statement 
+						ID(y)(y) 
+						ASSIGNOP 
+						[Expression 
+							[SimpleExpression 
+								[Term 
+									[Factor 
+										NUMBER(123.45e-3)(123.45e-3)  ] ] ] ] ]
+					ELSE 
+					[Statement 
+						[CompoundStatement 
+							BEGIN 
+							[OptionalStatements 
+								[StatementList 
+									[Statement 
+										ID(y)(y) 
+										ASSIGNOP 
+										[Expression 
+											[SimpleExpression 
+												[Term 
+													[Factor 
+														ID(test)(test) 
+														LPAREN 
+														[ExpressionList 
+															[Expression 
+																[SimpleExpression 
+																	[Term 
+																		[Factor 
+																			NUMBER(3.3)(3.3)  ] ] ] ] ]
+														RPAREN  ] ] ] ] ]
+									SEMICOL 
+									[Statement 
+										ID(x)(x) 
+										ASSIGNOP 
+										[Expression 
+											[SimpleExpression 
+												[Term 
+													[Factor 
+														ID(x)(x)  ] ]
+												ADDOP(PLUS)(LABEL) 
+												[Term 
+													[Factor 
+														NUMBER(2)(2)  ] ] ] ] ] ] ]
+								END  ] ] ] ] ]
+			END  ]
+	DOT  ]
