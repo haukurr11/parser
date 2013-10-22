@@ -500,7 +500,8 @@ SymbolTableEntry* Parser::parseFactor()
   */
   if(isNext(tc_ID)) {
     match(tc_ID);
-    parseFactorPrime();
+    SymbolTableEntry* st;
+    parseFactorPrime(st);
   }
   else if(isNext(tc_NUMBER)) {
     match(tc_NUMBER);
@@ -532,7 +533,7 @@ SymbolTableEntry* Parser::parseFactorPrime(SymbolTableEntry* prevEntry)
   }
   else if(isNext(tc_LPAREN)) {
     match(tc_LPAREN);
-    parseExpressionList();
+    parseExpressionList(prevEntry);
     match(tc_RPAREN);
   }
 }
