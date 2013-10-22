@@ -1,5 +1,5 @@
 #include "parser.h"
-
+//Constructor which creates a new SymbolTable object and a new scanner object, along with setting the member variables.
 Parser::Parser(std::istream& input, std::ostream& output)
 {
   m_symbolTable = new SymbolTable();
@@ -9,29 +9,29 @@ Parser::Parser(std::istream& input, std::ostream& output)
   m_totalErrors = 0;
   getToken();
 }
-
+//Deconstructor which deletes remaining token which is stored in the member variable m_lexan.
 Parser::~Parser()
 {
   delete m_lexan;
 }
-
+//Function which begins the parsing of the program. Informs the user if there are no errors.
 void Parser::parse()
 {
   parseProgram();
   if(!m_parserError)
     std::cout << "No errors";
 }
-
+//Returns the member Symbol Table.
 SymbolTable* Parser::getSymbolTable()
 {
   return m_symbolTable;
 }
-
+//Returns the number of errors generated in the program.
 int Parser::totalErrors()
 {
   return m_totalErrors;
 }
-
+//Function which checks if the Token code is correct.
 bool Parser::tokenCodeIn(TokenCode tc, const TokenCode list[])
 {
   for(int i=0;i<sizeof list;i++) {
@@ -44,12 +44,12 @@ bool Parser::tokenCodeIn(TokenCode tc, const TokenCode list[])
 void Parser::recover(const TokenCode list[])
 {
 }
-
+//Puts the next token into the member variable currentToken.
 void Parser::getToken()
 {
   m_currentToken = m_lexan->nextToken();
 }
-
+//Matches a token if it exists in the token code, and moves on the next one.
 void Parser::match(TokenCode tc)
 {
   if(getTokenCode() != tc) {
@@ -66,12 +66,12 @@ void Parser::setError(const std::string& err)
 void Parser::expectedTokenCode(TokenCode tc)
 {
 }
-
+//Returns the token code of the current token stored in the member variable.
 TokenCode Parser::getTokenCode()
 {
   return m_currentToken->getTokenCode();
 }
-
+//Returns true if next token matches the parameter, otherwise false.
 bool Parser::isNext(TokenCode tc)
 {
   return tc == getTokenCode();
