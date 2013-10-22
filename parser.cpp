@@ -16,7 +16,9 @@ Parser::~Parser()
 
 void Parser::parse()
 {
+  std::cout << "[Program ";
   parseProgram();
+  std::cout << " ]";
 }
 
 SymbolTable* Parser::getSymbolTable()
@@ -49,6 +51,7 @@ void Parser::getToken()
 
 void Parser::match(TokenCode tc)
 {
+  std::cout << m_currentToken->toString(m_currentToken) << " ";
   if(getTokenCode() != tc) {
     std::cout << "error!";
     exit(0);
@@ -71,7 +74,6 @@ TokenCode Parser::getTokenCode()
 
 bool Parser::isNext(TokenCode tc)
 {
-  getToken();
   return tc == getTokenCode();
 }
 
@@ -120,6 +122,7 @@ void Parser::parseDeclarations()
   /*
   declarations ::= var identifier_list : type ; declarations | ε
   */
+  std::cout << "[Declarations ";
   EntryList el;
   if(isNext(tc_VAR)) {
     match(tc_VAR);
@@ -130,6 +133,7 @@ void Parser::parseDeclarations()
     match(tc_SEMICOL);
     parseDeclarations();
   }
+  std::cout << " ]";
 }
 
 void Parser::parseType()
