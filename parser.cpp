@@ -486,6 +486,18 @@ SymbolTableEntry* Parser::parseSimpleExpression()
     parseTerm();
     parseSimpleExpressionPrime(st);
   }
+  else if(isNext(tc_NUMBER)) {
+    parseTerm();
+    parseSimpleExpressionPrime(st);
+  }
+  else if(isNext(tc_LPAREN)) {
+    parseTerm();
+    parseSimpleExpressionPrime(st);
+  }
+  else if(isNext(tc_NOT)) {
+    parseTerm();
+    parseSimpleExpressionPrime(st);
+  }
   else if(isNext(tc_ADDOP)) {
     parseSign();
     parseTerm();
@@ -493,6 +505,7 @@ SymbolTableEntry* Parser::parseSimpleExpression()
   }
   else {
     std::cout << "error!\n";
+    std::cout << m_currentToken->toString(m_currentToken) << " ";
     exit(0);
   }
   std::cout << " ]";
