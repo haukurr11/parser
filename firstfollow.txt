@@ -4,19 +4,19 @@ FOLLOW(OptionalStatements) = {end}
 FIRST(statement_list) = FIRST(statement) =
 FOLLOW(StatementList) = FOLLOW(OptionalStatements) = {end}
 
-FIRST(statement) = 
+FIRST(statement) = FIRST(compound_statement) + {id, if, while} = {begin, id, if, while}
 FOLLOW(Statement) = FIRST(StatementListPrime) + FOLLOW(StatementList) = {;}+{end} = {;,end}
 
 FIRST(compound_statement) = {begin}
-FOLLOW(compound_statement) = {end}
+FOLLOW(compound_statement) = {ε}
 
 FIRST(identifier_list) = {id}
 FOLLOW(identifier_list) = {:}
 FIRST(identifier_listPrime){, ,ε}
-FOLLOW(identifier_listPrime){end}
+FOLLOW(identifier_listPrime){ε}
 
 FIRST(declarations) = {var, ε}
-FOLLOW(declarations) = {end}
+FOLLOW(declarations) = {ε}
 
 FIRST(type) = FIRST(standard_type) + {array} = 
 FOLLOW(type) = FIRST(parameter_listPrime) + {;} =
@@ -24,8 +24,8 @@ FOLLOW(type) = FIRST(parameter_listPrime) + {;} =
 FIRST(standard_type) = {integer,real}
 FOLLOW(standard_type) = FOLLOW(type) = FIRST(parameter_listPrime + {;}
 
-FIRST(subprogram_declarations) = FIRST(subprogram_declaration) + {ε} =
-FOLLOW(subprogram_declarations) = {end}
+FIRST(subprogram_declarations) = FIRST(subprogram_declaration) + {ε} = FIRST(subprogram_head) = {function, procedure}
+FOLLOW(subprogram_declarations) = {ε}
 
 FIRST(subprogram_declaration) = FIRST(subprogram_head) = {function, procedure}
 FOLLOW(subprogram_declaration) = {;}
