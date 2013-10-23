@@ -1,34 +1,3 @@
-FIRST(OptionalStatements) = FIRST(statement_list) + {ε} = FOLLOW(optional_statements) + {ε} = {end}
 FOLLOW(OptionalStatements) = {end}
-
-FIRST(statement_list) = FIRST(statement) =
 FOLLOW(StatementList) = FOLLOW(OptionalStatements) = {end}
-
-FIRST(statement) = 
 FOLLOW(Statement) = FIRST(StatementListPrime) + FOLLOW(StatementList) = {;}+{end} = {;,end}
-
-FIRST(compound_statement) = {begin}
-FOLLOW(compound_statement) = {end}
-
-FIRST(identifier_list) = {id}
-FOLLOW(identifier_list) = {:}
-FIRST(identifier_listPrime){, ,ε}
-FOLLOW(identifier_listPrime){end}
-
-FIRST(declarations) = {var, ε}
-FOLLOW(declarations) = {end}
-
-FIRST(type) = FIRST(standard_type) + {array} = 
-FOLLOW(type) = FIRST(parameter_listPrime) + {;} =
-
-FIRST(standard_type) = {integer,real}
-FOLLOW(standard_type) = FOLLOW(type) = FIRST(parameter_listPrime + {;}
-
-FIRST(subprogram_declarations) = FIRST(subprogram_declaration) + {ε} =
-FOLLOW(subprogram_declarations) = {end}
-
-FIRST(subprogram_declaration) = FIRST(subprogram_head) = {function, procedure}
-FOLLOW(subprogram_declaration) = {;}
-
-FIRST(subprogram_head) = {function, procedure}
-FOLLOW(subprogram_head) = FIRST(compound_statement) + FIRST(declarations) = {var, begin, ε}
