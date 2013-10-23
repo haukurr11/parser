@@ -68,7 +68,7 @@ void SourceLine::printLine()
   std::cout << m_lineNo << " : " << m_line << std::endl;
   int size = convertInt(m_lineNo).size();
   for(int i=0;i<m_errors.size();i++) {
-    for(int j=0;j<=(m_errors[i].getColumn()+3+size);j++){
+    for(int j=1;j<=(m_errors[i].getColumn()+3+size-1);j++){
       std::cout << " ";
     }
     std::cout << "^" << m_errors[i].getError() << std::endl;
