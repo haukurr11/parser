@@ -45,7 +45,13 @@ bool Parser::tokenCodeIn(TokenCode tc, const TokenCode list[])
 
 void Parser::recover(const TokenCode list[])
 {
+  getToken();
+  for(; getTokenCode() != tc_EOF; getToken()) {
+      if(tokenCodeIn(getTokenCode(),list))
+          return;
+    }
 }
+
 //Puts the next token into the member variable currentToken.
 void Parser::getToken()
 {
@@ -62,15 +68,7 @@ void Parser::match(TokenCode tc)
 //Sets the correct error message which is displayed if an error occurs.
 void Parser::setError(const std::string& err)
 {
-  if(getTokenCode() == tc_ERROR) {
-    m_lexan->addError("Illegal character.");
-  }
-  else if(getTokenCode() == tc_ERROR2) {
-    m_lexan->addError("Identifier too long.");
-  }
-  else {
-    m_lexan->addError(err);
-  }
+  m_lexan->addError(err);
   m_totalErrors++;
   m_parserError = true;
 }
@@ -166,6 +164,8 @@ void Parser::parseType()
   }
   else {
     setError("Expected a type");
+    TokenCode list[] = {tc_SEMICOL};
+    recover(list);
   }
 }
 
@@ -287,6 +287,14 @@ void Parser::parseOptionalStatements()
   if(isNext(tc_ID) || isNext(tc_BEGIN)
   || isNext(tc_IF) || isNext(tc_WHILE))
     parseStatementList();
+  else if(isNext(tc_ERROR)) {
+    m_lexan->addError("Illegal character.");
+  }
+  else if(isNext(tc_ERROR2)) {
+    m_lexan->addError("Identifier too long.");
+  }
+  else {
+  }
 }
 
 void Parser::parseStatementList()
@@ -341,7 +349,24 @@ void Parser::parseStatement()
     parseStatement();
   }
   else {
-    setError("Expected a statement.");
+    if(isNext(tc_ERROR)) {
+      setError("Illegal character.");
+      getToken();
+      if(isNext(tc_ID)) {
+        getToken(); //NEXT
+      }
+    }
+    else if(isNext(tc_ERROR2)) {
+      setError("Identifier too long.");
+    }
+    else {
+      setError("Expected a statement.");
+    }
+    TokenCode list[] = {
+      tc_SEMICOL,tc_END, //FOLLOW(Statement)
+      tc_ID,tc_BEGIN,tc_IF,tc_WHILE //FIRST(StatementList)
+    };
+    recover(list);
   }
 }
 
@@ -481,6 +506,12 @@ SymbolTableEntry* Parser::parseSimpleExpression()
     parseTerm();
     parseSimpleExpressionPrime(st);
   }
+  else if(isNext(tc_ERROR)) {
+    m_lexan->addError("Illegal character.");
+  }
+  else if(isNext(tc_ERROR2)) {
+    m_lexan->addError("Identifier too long.");
+  }
   else {
     setError("Expected a simple expression.");
   }
@@ -540,6 +571,12 @@ SymbolTableEntry* Parser::parseFactor()
   else if(isNext(tc_NOT)) {
     match(tc_NOT);
     parseFactor();
+  }
+  else if(isNext(tc_ERROR)) {
+    m_lexan->addError("Illegal character.");
+  }
+  else if(isNext(tc_ERROR2)) {
+    m_lexan->addError("Identifier too long.");
   }
   else {
     setError("Expected a factor.");

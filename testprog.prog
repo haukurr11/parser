@@ -1,5 +1,5 @@
 program test;
-var i,j : $ubbish;
+var i,j : rubbish;
 begin
 first := 2;
 $econd := 3.

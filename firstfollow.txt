@@ -1,0 +1,3 @@
+FOLLOW(OptionalStatements) = {end}
+FOLLOW(StatementList) = FOLLOW(OptionalStatements) = {end}
+FOLLOW(Statement) = FIRST(StatementListPrime) + FOLLOW(StatementList) = {;}+{end} = {;,end}
