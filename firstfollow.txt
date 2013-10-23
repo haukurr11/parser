@@ -3,20 +3,28 @@ FIRST(identifier_listPrime){, ,ε}
 
 FIRST(declarations) = {var, ε}
 
-FIRST(type) = FIRST(standard_type) + {array} = 
+FIRST(type) = FIRST(standard_type) + {array} = {integer,real,array}
 
 FIRST(standard_type) = {integer,real}
 
-FIRST(subprogram_declarations) = FIRST(subprogram_declaration) + {ε} = FIRST(subprogram_head) = {function, procedure}
+FIRST(subprogram_declarations) =
+           FIRST(subprogram_declaration)
+          + {ε}
+          = FIRST(subprogram_head) = {function, procedure}
 
 FIRST(subprogram_declaration) = FIRST(subprogram_head) = {function, procedure}
 
+
+FIRST(parameter_list) = FIRST(identifier_list) = {, , ε}
+
 FIRST(subprogram_head) = {function, procedure}
 
+FIRST(arguments) = { ( }
 
 FIRST(compound_statement) = {begin}
 
-FIRST(OptionalStatements) = FIRST(statement_list) + {ε} = {begin, id, if, while, ε}
+FIRST(optional_statements) = FIRST(statement_list) + {ε}
+                           = {begin, id, if, while, ε}
 
 FIRST(statement_list) = FIRST(statement) = {begin, id, if, while}
 
