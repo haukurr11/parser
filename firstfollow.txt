@@ -3,7 +3,7 @@ FIRST(identifier_listPrime){, ,ε}
 
 FIRST(declarations) = {var, ε}
 
-FIRST(type) = FIRST(standard_type) + {array} = 
+FIRST(type) = FIRST(standard_type) + {array} = {integer,real, array}
 
 FIRST(standard_type) = {integer,real}
 
