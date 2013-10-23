@@ -1,8 +1,15 @@
 #include "sourceline.h"
 #include <iostream>
+#include <sstream>
+std::string convertInt(int number)
+{
+  std::stringstream ss;//create a stringstream
+  ss << number;//add number to the stream
+  return ss.str();//return a string with the contents of the stream
+}
 //Returns the member variable which stores column position.
 int LineError::getColumn()
-{.
+{
   return m_column;
 }
 //Return the error message being stored in the member variable errorMsg.
@@ -47,7 +54,7 @@ void SourceLine::buildLine(const std::string& str)
 void SourceLine::addError(const std::string& msg)
 {
   LineError err;
-  err.set(m_lastLexemeColumn, msg);
+  err.set(m_firstLexemeColumn, msg);
   m_errors.push_back(err);
 }
 //Checks if the error list is empty or not.
@@ -58,9 +65,10 @@ bool SourceLine::hasError()
 //Prints the line stored in the member variable to the console, gets the column number where the error was found and prints out the correct error message for it.
 void SourceLine::printLine()
 {
-  std::cout << m_line << std::endl;
+  std::cout << m_lineNo << " : " << m_line << std::endl;
+  int size = convertInt(m_lineNo).size();
   for(int i=0;i<m_errors.size();i++) {
-    for(int j=0;j<=m_errors[i].getColumn();j++){
+    for(int j=0;j<=(m_errors[i].getColumn()+3+size);j++){
       std::cout << " ";
     }
     std::cout << "^" << m_errors[i].getError() << std::endl;
@@ -69,6 +77,7 @@ void SourceLine::printLine()
 //Creates a new line for the error handling and clears all previous errors from the member list.
 void SourceLine::newLine()
 {
+  clearLine();
   m_lineNo++;
   m_firstLexemeColumn = 0;
   m_lastLexemeColumn = 0;

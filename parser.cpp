@@ -18,8 +18,10 @@ Parser::~Parser()
 void Parser::parse()
 {
   parseProgram();
-  if(!m_parserError)
-    std::cout << "No errors";
+  if(isNext(tc_EOF)) {
+    if(!m_parserError)
+      std::cout << "No errors";
+    }
 }
 //Returns the member Symbol Table.
 SymbolTable* Parser::getSymbolTable()
@@ -53,8 +55,7 @@ void Parser::getToken()
 void Parser::match(TokenCode tc)
 {
   if(getTokenCode() != tc) {
-    m_totalErrors++;
-    m_parserError = true;
+    expectedTokenCode(tc);
   }
   getToken();
 }
@@ -62,10 +63,13 @@ void Parser::match(TokenCode tc)
 void Parser::setError(const std::string& err)
 {
   m_lexan->addError(err);
+  m_totalErrors++;
+  m_parserError = true;
 }
 
 void Parser::expectedTokenCode(TokenCode tc)
 {
+    setError("Expected: " + TokenCodeToString(tc));
 }
 //Returns the token code of the current token stored in the member variable.
 TokenCode Parser::getTokenCode()
@@ -142,7 +146,7 @@ void Parser::parseType()
   */
   if(isNext(tc_INTEGER) || isNext(tc_REAL))
     parseStandardType();
-  else {
+  else if(isNext(tc_ARRAY)){
     match(tc_ARRAY);
     match(tc_LBRACKET);
     match(tc_NUMBER);
@@ -151,6 +155,9 @@ void Parser::parseType()
     match(tc_RBRACKET);
     match(tc_OF);
     parseStandardType();
+  }
+  else {
+    setError("Expected a type");
   }
 }
 
@@ -164,8 +171,7 @@ void Parser::parseStandardType()
   else if(isNext(tc_REAL))
     match(tc_REAL);
   else {
-    m_totalErrors++;
-    m_parserError = true;
+    setError("Expected a standard type");
   }
 }
 
@@ -212,8 +218,7 @@ void Parser::parseSubprogramHead()
     match(tc_SEMICOL);
   }
   else {
-    m_totalErrors++;
-    m_parserError = true;
+    setError("Expected a subprogram head.");
   }
 }
 
@@ -328,8 +333,7 @@ void Parser::parseStatement()
     parseStatement();
   }
   else {
-    m_totalErrors++;
-    m_parserError = true;
+    setError("Expected a statement.");
   }
 }
 
@@ -470,8 +474,7 @@ SymbolTableEntry* Parser::parseSimpleExpression()
     parseSimpleExpressionPrime(st);
   }
   else {
-    m_totalErrors++;
-    m_parserError = true;
+    setError("Expected a simple expression.");
   }
 }
 
@@ -531,8 +534,7 @@ SymbolTableEntry* Parser::parseFactor()
     parseFactor();
   }
   else {
-    m_totalErrors++;
-    m_parserError = true;
+    setError("Expected a factor.");
   }
 }
 
@@ -561,13 +563,10 @@ void Parser::parseSign()
   if(isNext(tc_ADDOP)){
     OpType op = m_currentToken->getOpType();
     if(op != op_PLUS && op != op_MINUS) {
-      m_totalErrors++;
-      m_parserError = true;
     }
     match(tc_ADDOP);
   }
   else {
-    m_totalErrors++;
-    m_parserError = true;
+    setError("Expected a sign.");
   }
 }

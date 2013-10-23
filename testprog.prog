@@ -1,0 +1,6 @@
+program test;
+var i,j : rubbish;
+begin
+first := 2;
+$econd := 3.
+end.

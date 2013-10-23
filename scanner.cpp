@@ -62,7 +62,8 @@ Token* Scanner::nextToken(void)
       }
       m_sourceLine.newLine();
     }
-    m_sourceLine.buildLine(lex);
+    else
+      m_sourceLine.buildLine(lex);
   } while(tCode == tc_SPACE || tCode == tc_COMMENT ||
          tCode == tc_NEWLINE || tCode == tc_TAB);
   //Change the lexeme to lowercase(case insensitive)
