@@ -1,4 +1,4 @@
-FIRST(OptionalStatements) = FIRST(statement_list) + {ε} = FOLLOW(optional_statements) + {ε} = {end}
+FIRST(OptionalStatements) = FIRST(statement_list) + {ε} = FOLLOW(optional_statements) + {ε} = {ε}
 FOLLOW(OptionalStatements) = {end}
 
 FIRST(statement_list) = FIRST(statement) =
