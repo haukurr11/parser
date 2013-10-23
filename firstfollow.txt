@@ -1,7 +1,7 @@
-FIRST(OptionalStatements) = FIRST(statement_list) + {ε} = FOLLOW(optional_statements) + {ε} = {ε}
+FIRST(OptionalStatements) = FIRST(statement_list) + {ε} = {begin, id, if, while, ε}
 FOLLOW(OptionalStatements) = {end}
 
-FIRST(statement_list) = FIRST(statement) =
+FIRST(statement_list) = FIRST(statement) = {begin, id, if, while}
 FOLLOW(StatementList) = FOLLOW(OptionalStatements) = {end}
 
 FIRST(statement) = FIRST(compound_statement) + {id, if, while} = {begin, id, if, while}
