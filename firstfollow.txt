@@ -14,7 +14,6 @@ FIRST(subprogram_declarations) =
 
 FIRST(subprogram_declaration) = FIRST(subprogram_head) = {function, procedure}
 
-
 FIRST(parameter_list) = FIRST(identifier_list) = {, , ε}
 
 FIRST(subprogram_head) = {function, procedure}
