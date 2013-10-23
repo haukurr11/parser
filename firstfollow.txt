@@ -1,5 +1,5 @@
 FIRST(identifier_list) = {id}
-FIRST(identifier_listPrime){, ,ε}
+FIRST(identifier_list´){, ,ε}
 
 FIRST(declarations) = {var, ε}
 
