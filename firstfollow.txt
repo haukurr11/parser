@@ -34,7 +34,8 @@ FIRST(statement´) = {assignop, [, (, ε}
 FIRST(variable) = {id}
 FIRST(variable´) = {[, ε}
 
-FIRST(procedure_statement) = id
+FIRST(procedure_statement) = {id}
+FIRST(procedure_statement´) = {(, ε}
 
 FIRST(expression_list) = FIRST(expression) = {id,num,(,not,+,-}
 
