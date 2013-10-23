@@ -55,21 +55,29 @@ void Parser::getToken()
 void Parser::match(TokenCode tc)
 {
   if(getTokenCode() != tc) {
-    expectedTokenCode(tc);
+      expectedTokenCode(tc);
   }
   getToken();
 }
 //Sets the correct error message which is displayed if an error occurs.
 void Parser::setError(const std::string& err)
 {
-  m_lexan->addError(err);
+  if(getTokenCode() == tc_ERROR) {
+    m_lexan->addError("Illegal character.");
+  }
+  else if(getTokenCode() == tc_ERROR2) {
+    m_lexan->addError("Identifier too long.");
+  }
+  else {
+    m_lexan->addError(err);
+  }
   m_totalErrors++;
   m_parserError = true;
 }
 
 void Parser::expectedTokenCode(TokenCode tc)
 {
-    setError("Expected: " + TokenCodeToString(tc));
+    setError("Expected: " + TokenCodeToString(tc) + ".");
 }
 //Returns the token code of the current token stored in the member variable.
 TokenCode Parser::getTokenCode()
