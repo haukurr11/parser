@@ -1,4 +1,5 @@
 FIRST(identifier_list) = {id}
+
 FIRST(identifier_list´) = {, ,ε}
 
 FIRST(declarations) = {var, ε}
@@ -74,14 +75,53 @@ FOLLOW(declarations) = FIRST(subprogram_declarations)
                      = {function, procedure} + { begin }
                      = {function,procedure,begin}
 
-FOLLOW(type) = FIRST(parameter_list´) + {;} = {}
+FOLLOW(type) = FIRST(parameter_list´) + {;} 
+             = {ε,;}
+             = FOLLOW(parameter_list) + {;} 
+             = {),;}
 
-FOLLOW(standard_type) = FOLLOW(type) = FIRST(parameter_listPrime + {;}
-FOLLOW(subprogram_declarations) = {ε}
+FOLLOW(standard_type) = FOLLOW(type) 
+                      = {),;}
+
+FOLLOW(subprogram_declarations) = FIRST(compound_statement)
+                                = {begin}
+
 FOLLOW(subprogram_declaration) = {;}
-FOLLOW(subprogram_head) = FIRST(compound_statement) + FIRST(declarations) = {var, begin, ε}
-FOLLOW(compound_statement) = {ε}
-FOLLOW(OptionalStatements) = {end}
-FOLLOW(StatementList) = FOLLOW(OptionalStatements) = {end}
-FOLLOW(Statement) = FIRST(StatementListPrime) + FOLLOW(StatementList) = {;}+{end} = {;,end}
+
+FOLLOW(subprogram_head) = FIRST(compound_statement) + FIRST(declarations) = {var, begin}
+
+FOLLOW(arguments) = {:,;}
+
+FOLLOW(compound_statement) = {.} + FOLLOW(subprogram_declaration)
+                           = {.} {;}
+                           = {.,;}
+
+FOLLOW(optional_statements) = {end}
+
+FOLLOW(statement_list) = FOLLOW(optional_statements) = {end}
+
+FOLLOW(statement) = FIRST(StatementListPrime) + FOLLOW(StatementList) = {;}+{end} = {;,end}
+
+FOLLOW(variable) = {}
+
+FOLLOW(procedure_statement) = {}
+
+FOLLOW(expression_list) = {)}
+
+FOLLOW(expression) = { then,do,],), , }
+
+FOLLOW(simple_expression) = FIRST(expression´)
+                          + FOLLOW(expression´)
+                          {relop, then,do,],), , }
+
+FOLLOW(term) = FIRST(simple_expression´)
+             + FOLLOW(simple_expression´)
+             = {addop,relop, then,do,],), , }
+
+
+FOLLOW(factor) = FIRST(term´)
+               + FOLLOW(term´)
+               = {mulop,addop,relop, then,do,],), , }
+
+
 
