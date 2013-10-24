@@ -1,5 +1,5 @@
 FIRST(identifier_list) = {id}
-FIRST(identifier_list´){, ,ε}
+FIRST(identifier_list´) = {, ,ε}
 
 FIRST(declarations) = {var, ε}
 
@@ -12,13 +12,16 @@ FIRST(subprogram_declarations) =
           + {ε}
           = FIRST(subprogram_head) = {function, procedure}
 
-FIRST(subprogram_declaration) = FIRST(subprogram_head) = {function, procedure}
-
-FIRST(parameter_list) = FIRST(identifier_list) = {, , ε}
+FIRST(subprogram_declaration) = FIRST(subprogram_head) = {function, procedure,ε}
 
 FIRST(subprogram_head) = {function, procedure}
 
-FIRST(arguments) = { ( }
+FIRST(arguments) = { ( , ε}
+
+FIRST(parameter_list) = FIRST(identifier_list) = {id}
+
+FIRST(parameter_list´) = {; , ε}
+
 
 FIRST(compound_statement) = {begin}
 
@@ -26,6 +29,8 @@ FIRST(optional_statements) = FIRST(statement_list) + {ε}
                            = {begin, id, if, while, ε}
 
 FIRST(statement_list) = FIRST(statement) = {begin, id, if, while}
+
+FIRST(statement_list´) = {; , ε}
 
 FIRST(statement) = FIRST(compound_statement) + {id, if, while} = {begin, id, if, while}
 
@@ -40,22 +45,37 @@ FIRST(procedure_statement´) = {(, ε}
 FIRST(expression_list) = FIRST(expression) = {id,num,(,not,+,-}
 
 FIRST(expression) = FIRST(simple_expression) = {id,num,(,not,+,-}
+FIRST(expression´) = {relop, ε}
 
 FIRST(simple_expression) = FIRST(term) + FIRST(sign)
                          = {id,num,(,not} + {+,-}
                          = {id,num,(,not,+,-}
 
+FIRST(simple_expression´) = {addop,ε}
+
 FIRST(term) = FIRST(factor) = {id,num,(,not}
 
+FIRST(term´) = {mulop,ε}
+
 FIRST(factor) = {id,num,(,not}
+FIRST(factor´) = {[,(,ε}
 
 FIRST(sign) = {+,-}
 
 
+
+
 FOLLOW(identifier_list) = {:}
-FOLLOW(identifier_listPrime){ε}
-FOLLOW(declarations) = {ε}
-FOLLOW(type) = FIRST(parameter_listPrime) + {;} =
+
+FOLLOW(identifier_list´) = {:}
+
+FOLLOW(declarations) = FIRST(subprogram_declarations)
+                     + FIRST(compound_statement)
+                     = {function, procedure} + { begin }
+                     = {function,procedure,begin}
+
+FOLLOW(type) = FIRST(parameter_list´) + {;} = {}
+
 FOLLOW(standard_type) = FOLLOW(type) = FIRST(parameter_listPrime + {;}
 FOLLOW(subprogram_declarations) = {ε}
 FOLLOW(subprogram_declaration) = {;}
