@@ -66,6 +66,10 @@ Token* Scanner::nextToken(void)
       m_sourceLine.buildLine(lex);
   } while(tCode == tc_SPACE || tCode == tc_COMMENT ||
          tCode == tc_NEWLINE || tCode == tc_TAB);
+  if(tCode == tc_ERROR)
+    addError("Illegal character");
+  if(tCode == tc_ERROR2)
+    addError("Identifier too long.");
   //Change the lexeme to lowercase(case insensitive)
   std::transform( lex.begin(), lex.end(), lex.begin(),::tolower );
   if(tCode == tc_ID || tCode == tc_NUMBER) {
