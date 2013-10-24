@@ -45,10 +45,10 @@ bool Parser::tokenCodeIn(TokenCode tc, const TokenCode list[])
 
 void Parser::recover(const TokenCode list[])
 {
-  getToken();
   for(; getTokenCode() != tc_EOF; getToken()) {
-      if(tokenCodeIn(getTokenCode(),list))
+      if(tokenCodeIn(getTokenCode(),list)) {
           return;
+      }
     }
 }
 
@@ -56,6 +56,7 @@ void Parser::recover(const TokenCode list[])
 void Parser::getToken()
 {
   m_currentToken = m_lexan->nextToken();
+  //std::cout << TokenCodeToString(getTokenCode()) << "\n";
 }
 //Matches a token if it exists in the token code, and moves on the next one.
 void Parser::match(TokenCode tc)
@@ -63,7 +64,9 @@ void Parser::match(TokenCode tc)
   if(getTokenCode() != tc) {
       expectedTokenCode(tc);
   }
-  getToken();
+  else {
+    getToken();
+  }
 }
 //Sets the correct error message which is displayed if an error occurs.
 void Parser::setError(const std::string& err)
@@ -71,6 +74,7 @@ void Parser::setError(const std::string& err)
   m_lexan->addError(err);
   m_totalErrors++;
   m_parserError = true;
+  std::cout << err << "\n";
 }
 
 void Parser::expectedTokenCode(TokenCode tc)
@@ -111,6 +115,7 @@ void Parser::parseIdentifierList(EntryList& idList)
   /*
   identifier_list ::= id identifier_list´
   */
+  //std::cout << "IDLIST\n";
   match(tc_ID);
   EntryList el;
   parseIdentifierListPrime(el);
@@ -126,6 +131,12 @@ void Parser::parseIdentifierListPrime(EntryList& idList)
     match(tc_ID);
     parseIdentifierListPrime(idList);
   }
+  else if(isNext(tc_ERROR)) {
+    m_parserError = false;
+    setError("Illegal character.");
+    TokenCode list[] = {tc_COLON};
+    recover(list);
+  }
 }
 
 void Parser::parseDeclarations()
@@ -133,14 +144,35 @@ void Parser::parseDeclarations()
   /*
   declarations ::= var identifier_list : type ; declarations | ε
   */
+  //std::cout << "DECLRSNS\n";
+  bool declaration = false;
   EntryList el;
-  if(isNext(tc_VAR)) {
+    ////std::cout << TokenCodeToString(getTokenCode()) << "\n";
+  if(isNext(tc_ERROR)) {
+    m_parserError = false;
+    setError("Illegal character.");
+    TokenCode list[] = {tc_FUNCTION,tc_PROCEDURE,tc_BEGIN};
+    recover(list);
+  }
+  else if(isNext(tc_VAR)) {
+    declaration = true;
     match(tc_VAR);
     EntryList el;
     parseIdentifierList(el);
     match(tc_COLON);
     parseType();
     match(tc_SEMICOL);
+  }
+  if(declaration) {
+    if(m_parserError) {
+      m_parserError = false;
+      TokenCode list[] = { tc_VAR,
+                           tc_FUNCTION,
+                           tc_PROCEDURE,
+                           tc_BEGIN,
+                           };
+      recover(list);
+    }
     parseDeclarations();
   }
 }
@@ -150,9 +182,15 @@ void Parser::parseType()
   /*
   type ::= standard_type | array [ num .. num ] of standard_type
   */
+  //std::cout << "TYPE\n";
+  bool istype = false;
   if(isNext(tc_INTEGER) || isNext(tc_REAL))
+  {
+    istype = true;
     parseStandardType();
+  }
   else if(isNext(tc_ARRAY)){
+    istype = true;
     match(tc_ARRAY);
     match(tc_LBRACKET);
     match(tc_NUMBER);
@@ -164,13 +202,21 @@ void Parser::parseType()
   }
   else {
     setError("Expected a type");
-    TokenCode list[] = {tc_SEMICOL};
+    TokenCode list[] = {tc_SEMICOL,tc_RPAREN};
     recover(list);
+  }
+  if(istype) {
+    if(m_parserError) {
+      m_parserError = false;
+      TokenCode list[] = { tc_RPAREN,tc_SEMICOL};
+      recover(list);
+    }
   }
 }
 
 void Parser::parseStandardType()
 {
+  //std::cout << "STANDARD\n";
   /*
   standard_type ::= integer | real
   */
@@ -188,10 +234,17 @@ void Parser::parseSubprogramDeclarations()
   /*
   subprogram_declarations ::= subprogram_declaration ; subprogram_declarations | ε
   */
+  //std::cout << "SUBPROGS\n";
   if(isNext(tc_FUNCTION) || isNext(tc_PROCEDURE)) {
     parseSubprogramDeclaration();
     match(tc_SEMICOL);
     parseSubprogramDeclarations();
+  }
+  else if(isNext(tc_ERROR)) {
+    m_parserError = false;
+    setError("Illegal character.");
+    TokenCode list[] = {tc_BEGIN};
+    recover(list);
   }
 }
 
@@ -200,6 +253,7 @@ void Parser::parseSubprogramDeclaration()
   /*
   subprogram_declaration ::= subprogram_head declarations compound_statement
   */
+  //std::cout << "SUBPROG\n";
   parseSubprogramHead();
   parseDeclarations();
   parseCompoundStatement();
@@ -211,6 +265,7 @@ void Parser::parseSubprogramHead()
   subprogram_head ::= function id arguments : standard_type ;
                   | procedure id arguments ;
   */
+  //std::cout << "HEAD\n";
   if(isNext(tc_FUNCTION)) {
     match(tc_FUNCTION);
     match(tc_ID);
@@ -235,10 +290,17 @@ void Parser::parseArguments()
   /*
   arguments ::= ( parameter_list ) | ε
   */
+  //std::cout << "ARGS\n";
   if(isNext(tc_LPAREN)) {
     match(tc_LPAREN);
     parseParameterList();
     match(tc_RPAREN);
+  }
+  else if(isNext(tc_ERROR)) {
+    m_parserError = false;
+    setError("Illegal character.");
+    TokenCode list[] = {tc_COLON,tc_SEMICOL};
+    recover(list);
   }
 }
 
@@ -247,9 +309,14 @@ void Parser::parseParameterList()
   /*
   parameter_list ::= identifier_list : type parameter_list´
   */
+  //std::cout << "PLIST\n";
   EntryList el;
   parseIdentifierList(el);
+  if(m_parserError)
+    m_parserError = false;
   match(tc_COLON);
+  if(m_parserError)
+    getToken();
   parseType();
   parseParameterListPrime();
 }
@@ -267,6 +334,12 @@ void Parser::parseParameterListPrime()
     parseType();
     parseParameterListPrime();
   }
+  else if(isNext(tc_ERROR)) {
+    m_parserError = false;
+    setError("Illegal character.");
+    TokenCode list[] = {tc_RPAREN};
+    recover(list);
+  }
 }
 
 void Parser::parseCompoundStatement()
@@ -274,9 +347,20 @@ void Parser::parseCompoundStatement()
   /*
   compound_statement ::= begin optional_statements end
   */
-  match(tc_BEGIN);
-  parseOptionalStatements();
-  match(tc_END);
+  //std::cout << "COMPOUND\n";
+  if(isNext(tc_BEGIN)) {
+    match(tc_BEGIN);
+    parseOptionalStatements();
+    match(tc_END);
+  }
+  else {
+
+    TokenCode list[] = {
+             tc_DOT,
+             tc_SEMICOL //FOLLOW(CompoundStatement)
+       };
+    recover(list);
+  }
 }
 
 void Parser::parseOptionalStatements()
@@ -284,11 +368,15 @@ void Parser::parseOptionalStatements()
   /*
   optional_statements ::= statement_list | ε
   */
+  //std::cout << "OPTIONAL\n";
   if(isNext(tc_ID) || isNext(tc_BEGIN)
   || isNext(tc_IF) || isNext(tc_WHILE))
     parseStatementList();
   else if(isNext(tc_ERROR)) {
-    m_lexan->addError("Illegal character.");
+    m_parserError = false;
+    setError("Illegal character.");
+    TokenCode list[] = {tc_END};
+    recover(list);
   }
   else if(isNext(tc_ERROR2)) {
     m_lexan->addError("Identifier too long.");
@@ -302,6 +390,7 @@ void Parser::parseStatementList()
   /*
   statement_list ::= statement statement_list´
   */
+  //std::cout << "SLIST\n";
   parseStatement();
   parseStatementListPrime();
 }
@@ -316,6 +405,12 @@ void Parser::parseStatementListPrime()
     parseStatement();
     parseStatementListPrime();
   }
+  else if(isNext(tc_ERROR)) {
+    m_parserError = false;
+    setError("Illegal character.");
+    TokenCode list[] = {tc_END};
+    recover(list);
+  }
 }
 
 void Parser::parseStatement()
@@ -326,6 +421,7 @@ void Parser::parseStatement()
               | if expression then statement else statement
               | while expression do statement
   */
+  //std::cout << "STATEMENT\n";
   if(isNext(tc_ID)) {
     match(tc_ID);
     SymbolTableEntry* st;
@@ -351,16 +447,16 @@ void Parser::parseStatement()
   else {
     if(isNext(tc_ERROR)) {
       setError("Illegal character.");
-      getToken();
-      if(isNext(tc_ID)) {
-        getToken(); //NEXT
+      m_parserError = false;
+      TokenCode list[] = {tc_SEMICOL,tc_END};
+      recover(list);
       }
-    }
     else if(isNext(tc_ERROR2)) {
       setError("Identifier too long.");
     }
     else {
-      setError("Expected a statement.");
+      //std::cout << TokenCodeToString(getTokenCode()) << "\n";
+      setError("Expected an identifier.");
     }
     TokenCode list[] = {
       tc_SEMICOL,tc_END, //FOLLOW(Statement)
@@ -391,6 +487,18 @@ void Parser::parseStatementPrime(SymbolTableEntry* prevEntry)
     parseExpressionList(prevEntry);
     match(tc_RPAREN);
   }
+  else if(isNext(tc_ERROR)) {
+    m_parserError = false;
+    setError("Illegal character.");
+    TokenCode list[] = {tc_SEMICOL,tc_END};
+    recover(list);
+  }
+  else if(isNext(tc_ERROR2)) {
+    m_parserError = false;
+    setError("Identifier too long.");
+    TokenCode list[] = {tc_SEMICOL,tc_END};
+    recover(list);
+  }
 }
 
 SymbolTableEntry* Parser::parseVariable()
@@ -398,6 +506,7 @@ SymbolTableEntry* Parser::parseVariable()
   /*
   variable ::= id variable´
   */
+  //std::cout << "VAR\n";
   match(tc_ID);
   SymbolTableEntry* st;
   parseVariablePrime(st);
@@ -420,6 +529,7 @@ void Parser::parseProcedureStatement()
   /*
   procedure_statement ::= id procedure_statement´
   */
+  //std::cout << "PROC\n";
   match(tc_ID);
   SymbolTableEntry* st;
   parseProcedureStatementPrime(st);
@@ -441,6 +551,7 @@ void Parser::parseExpressionList(SymbolTableEntry* prevEntry)
   /*
   expression_list ::= expression expression_list´
   */
+  //std::cout << "EXPLIST\n";
   parseExpression();
   EntryList el;
   parseExpressionListPrime(el);
@@ -451,11 +562,18 @@ void Parser::parseExpressionListPrime(EntryList& expList)
   /*
   expression_list´ ::=  , expression expression_list´ | ε
   */
+  parseExpression();
   if(isNext(tc_COMMA)){
     match(tc_COMMA);
     parseExpression();
     parseExpressionListPrime(expList);
   }
+  else if(isNext(tc_ERROR)) {
+    setError("Illegal character.");
+    m_parserError = false;
+    TokenCode list[] = {tc_RPAREN};
+    recover(list);
+    }
 }
 
 SymbolTableEntry* Parser::parseExpression()
@@ -463,6 +581,7 @@ SymbolTableEntry* Parser::parseExpression()
   /*
   expression ::= simple_expression expression´
   */
+  //std::cout << "EXP\n";
   parseSimpleExpression();
   SymbolTableEntry* st;
   parseExpressionPrime(st);
@@ -477,6 +596,13 @@ SymbolTableEntry* Parser::parseExpressionPrime(SymbolTableEntry* prevEntry)
     match(tc_RELOP);
     parseSimpleExpression();
   }
+  else if(isNext(tc_ERROR)) {
+    m_parserError = false;
+    setError("Illegal character.");
+    TokenCode list[] = {tc_THEN,tc_DO,
+                        tc_RBRACKET,tc_COMMA,tc_RPAREN};
+    recover(list);
+  }
 }
 
 SymbolTableEntry* Parser::parseSimpleExpression()
@@ -484,6 +610,7 @@ SymbolTableEntry* Parser::parseSimpleExpression()
   /*
   simple_expression ::= term simple_expression´ | sign term simple_expression´
   */
+  //std::cout << "SIMPLEXP\n";
   SymbolTableEntry* st;
   if(isNext(tc_ID)) {
     parseTerm();
@@ -507,7 +634,10 @@ SymbolTableEntry* Parser::parseSimpleExpression()
     parseSimpleExpressionPrime(st);
   }
   else if(isNext(tc_ERROR)) {
-    m_lexan->addError("Illegal character.");
+    setError("Illegal character.");
+    m_parserError = false;
+    TokenCode list[] = {tc_RELOP,tc_THEN,tc_RBRACKET,tc_RPAREN,tc_COMMA};
+    recover(list);
   }
   else if(isNext(tc_ERROR2)) {
     m_lexan->addError("Identifier too long.");
@@ -527,6 +657,12 @@ SymbolTableEntry* Parser::parseSimpleExpressionPrime(SymbolTableEntry* prevEntry
     parseTerm();
     parseSimpleExpressionPrime(prevEntry);
   }
+  else if(isNext(tc_ERROR)) {
+    setError("Illegal character.");
+    m_parserError = false;
+    TokenCode list[] = {tc_RELOP,tc_THEN,tc_RBRACKET,tc_RPAREN,tc_COMMA};
+    recover(list);
+  }
 }
 
 SymbolTableEntry* Parser::parseTerm()
@@ -534,6 +670,7 @@ SymbolTableEntry* Parser::parseTerm()
   /*
   term ::= factor term´
   */
+  //std::cout << "TERM\n";
   SymbolTableEntry* st = parseFactor();
   parseTermPrime(st);
 }
@@ -555,6 +692,7 @@ SymbolTableEntry* Parser::parseFactor()
   /*
   factor ::= id factor´ | num | ( expression ) | not factor
   */
+  //std::cout << "FACTOR\n";
   if(isNext(tc_ID)) {
     match(tc_ID);
     SymbolTableEntry* st;
@@ -573,10 +711,10 @@ SymbolTableEntry* Parser::parseFactor()
     parseFactor();
   }
   else if(isNext(tc_ERROR)) {
-    m_lexan->addError("Illegal character.");
+    setError("Illegal character.");
   }
   else if(isNext(tc_ERROR2)) {
-    m_lexan->addError("Identifier too long.");
+    setError("Identifier too long.");
   }
   else {
     setError("Expected a factor.");
@@ -605,6 +743,7 @@ void Parser::parseSign()
   /*
   sign ::= + | -
   */
+  //std::cout << "SIGN\n";
   if(isNext(tc_ADDOP)){
     OpType op = m_currentToken->getOpType();
     if(op != op_PLUS && op != op_MINUS) {
